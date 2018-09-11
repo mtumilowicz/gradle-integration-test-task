@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+}
+
+group 'gradle-integration-test-task'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    integrationTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    integrationTestImplementation.extendsFrom implementation
+    integrationTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+dependencies {
+    integrationTestImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
+}
+
+task integrationTest(type: Test) {
+    description = 'Integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+
+    outputs.upToDateWhen { false }
+    
+    mustRunAfter test
+}
+
+check.dependsOn integrationTest
