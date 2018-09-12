@@ -64,8 +64,6 @@ aesthetics and manageability
 * the different test types require different compilation or 
 runtime classpaths or some other difference in setup
 
-
-
 # dependency configurations (maven scopes)
 * compileOnly — for dependencies that are necessary to compile your production code but shouldn’t be part of the runtime classpath
 * implementation (supersedes compile) — used for compilation and runtime
