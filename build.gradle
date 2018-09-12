@@ -36,7 +36,7 @@ task integrationTest(type: Test) {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
 
-    outputs.upToDateWhen { false }
+    outputs.upToDateWhen { false } // other way: inputs.upToDateWhen { false }
     
     mustRunAfter test
 }
