@@ -25,7 +25,8 @@ targetCompatibility = '1.8'
 
 # introduction
 Gradle uses the same default directory structure for source files 
-and resources, and it works with Maven-compatible repositories
+and resources, and it works with Maven-compatible repositories  
+Some useful tasks:
 * **compileJava** task that compiles all the Java source files 
 under `src/main/java`
 * **compileTestJava** task for source files under `src/test/java`
@@ -35,6 +36,7 @@ resources from `src/main/resources` into a single JAR
 named `<project>-<version>.jar`
 
 # source sets
+## basics
 Source files and resources are often logically grouped by type 
 (application code, unit tests, integration tests etc...) - 
 each logical group typically has its own sets of file dependencies, 
@@ -46,6 +48,7 @@ Source sets are the way of defining:
 * the compilation classpath, including any required dependencies
 * where the compiled class files are placed
 
+# convention
 Naming:
 * *sourceSetName*CompileOnly
 * *sourceSetName*Implementation
@@ -53,6 +56,7 @@ Naming:
 
 _Remark_: for `main` (by convention) - we use `compileJava`
 
+## additional source sets
 In addition to the `main` source set, the Java Plugin defines a 
 `test` source set (typically use this source set for unit tests) 
 that represents the project’s tests. This source set is used 
@@ -71,3 +75,66 @@ runtime classpaths or some other difference in setup
 * testCompileOnly — same as compileOnly except it’s for the tests
 * testImplementation — test equivalent of implementation
 * testRuntimeOnly — test equivalent of runtimeOnly
+
+# how gradle detects tests
+For JUnit, Gradle scans for both JUnit 3 and 4 test classes. 
+A class is considered to be a JUnit test if it:
+* Ultimately inherits from `TestCase` or `GroovyTestCase`
+* Is annotated with `@RunWith`
+* Contains a method annotated with `@Test` or a super class does
+
+# project description
+We provide tasks for running integration tests under assumptions:
+1. integration tests should be under `src/integrationTest`
+
+    defining dedicated source set:
+    ```
+    sourceSets {
+        integrationTest {
+            compileClasspath += sourceSets.main.output
+            runtimeClasspath += sourceSets.main.output
+        }
+    }
+    ``` 
+    
+1. integration tests task should be in `verification` group
+    ```
+    task integrationTest(type: Test) {
+        ...
+        group = 'verification'
+        ...
+    }
+    ```
+    
+1. integration tests should be excluded from incremental build mechanism
+    ```
+    task integrationTest(type: Test) {
+        ...
+        outputs.upToDateWhen { false } // other way: inputs.upToDateWhen { false }
+        ...
+    }    
+    ```    
+1. integration tests should have their own classpath & dependency 
+configuration
+    * `compileClasspath`, `runtimeClasspath` is defined with source set
+    * dependencies
+        ```
+        configurations {
+            integrationTestImplementation.extendsFrom implementation
+            integrationTestRuntimeOnly.extendsFrom runtimeOnly
+        }
+        ```
+        extendsFrom informs us that all dependencies from 
+        `implementation / runtimeOnly` are included for our source set
+1. integration tests should run after unit tests
+    ```
+    task integrationTest(type: Test) {
+        ...
+        mustRunAfter test
+        ...
+    }
+    ```
+1. integration tests should be run during `check` task
+    ```
+    check.dependsOn integrationTest
+    ```
