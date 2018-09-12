@@ -138,3 +138,17 @@ configuration
     ```
     check.dependsOn integrationTest
     ```
+1. integrationTest task should be of type Test
+    ```
+    task integrationTest(type: Test) {...}
+    ```
+1. integrationTest task should use classpath and compiled test classes
+    from described above `integrationTest` directory
+    ```
+    task integrationTest(type: Test) {
+        ...
+        testClassesDirs = sourceSets.integrationTest.output.classesDirs
+        classpath = sourceSets.integrationTest.runtimeClasspath
+        ...
+    }
+    ```
