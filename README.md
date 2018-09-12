@@ -134,7 +134,7 @@ configuration
         ...
     }
     ```
-1. integration tests should be run during `check` task
+1. integration tests should be run before `check` task
     ```
     check.dependsOn integrationTest
     ```
@@ -143,7 +143,7 @@ configuration
     task integrationTest(type: Test) {...}
     ```
 1. integrationTest task should use classpath and compiled test classes
-    from described above `integrationTest` directory
+    based on the content of `integrationTest` directory
     ```
     task integrationTest(type: Test) {
         ...
