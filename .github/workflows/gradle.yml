@@ -8,9 +8,13 @@ stages:
 
 on:
   push:
-    branches: [ any ]
+    paths:
+      - src/**/*
+      - build.gradle
   pull_request:
-    branches: [ any ]
+    paths:
+      - src/**/*
+      - build.gradle
 
 jobs:
   build:
