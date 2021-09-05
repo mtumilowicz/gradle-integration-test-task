@@ -5,20 +5,21 @@ name: Java CI with Gradle
 stages:
   - build
   - test
+
+
 on:
   push:
-    branches: [ master, *]
+    branches: [ any ]
   pull_request:
-    branches: [ master ]
+    branches: [ any ]
 
-.changes_all: &changes_all
-  changes:
-    - 'src/**/*'
-    - 'build.gradle'
-    - 'Dockerfile'
 jobs:
   build:
     runs-on: ubuntu-latest
+    only:
+      changes:
+        - src/**/*
+        - build.gradle
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
