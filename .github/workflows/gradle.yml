@@ -6,11 +6,12 @@ stages:
   - build
   - test
 
+
 on:
   push:
-    branches: [ master ]
+    branches: [ any ]
   pull_request:
-    branches: [ master ]
+    branches: [ any ]
 
 jobs:
   build:
